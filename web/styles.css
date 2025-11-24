@@ -1,0 +1,193 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #fff;
+  color: #232B36;
+}
+header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background: #FFB347;
+  flex-wrap: wrap;
+}
+.logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  margin-right: 16px;
+  cursor: pointer;
+}
+h1, h2 {
+  margin: 0 0 12px 0;
+  font-weight: bold;
+  color: #00CFFF;
+  font-size: 2rem;
+}
+main {
+  padding: 16px;
+}
+.instruction {
+  font-size: 1.1rem;
+  color: #232B36;
+  margin-bottom: 18px;
+  text-align: center;
+}
+.how-btn, button {
+  background: #FFB347;
+  color: #232B36;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(35,43,54,0.07);
+}
+footer {
+  text-align: center;
+  padding: 12px;
+  background: #fff;
+  color: #888;
+  font-size: 0.95rem;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+}
+.scan-img {
+  width: 180px;
+  height: 180px;
+  border-radius: 16px;
+  display: block;
+  margin: 0 auto 24px auto;
+}
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.3);
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px;
+  max-width: 90vw;
+  width: 340px;
+  margin: auto;
+  text-align: center;
+}
+.admin-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+.admin-card {
+  border-radius: 16px;
+  padding: 20px;
+  width: 220px;
+  box-shadow: 0 2px 8px rgba(35,43,54,0.08);
+  color: #232B36;
+  margin-bottom: 16px;
+}
+.role-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+.role-modal button {
+  width: 100%;
+  margin: 8px 0;
+  font-size: 1.1rem;
+}
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+ul {
+  list-style: none;
+  padding: 0;
+}
+li {
+  background: #F9F9F9;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.back-btn {
+  background: none;
+  color: #232B36;
+  font-size: 1rem;
+  border: none;
+  margin-right: 12px;
+  cursor: pointer;
+}
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+  }
+  .logo {
+    margin-bottom: 8px;
+    margin-right: 0;
+  }
+  h1, h2 {
+    font-size: 1.3rem;
+  }
+  main {
+    padding: 8px;
+  }
+  .scan-img {
+    width: 120px;
+    height: 120px;
+  }
+  .admin-card {
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+  }
+  .modal-content {
+    width: 95vw;
+    padding: 16px;
+  }
+  .role-modal {
+    padding: 8px;
+  }
+}
+.center-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+header, main, footer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.modal {
+  justify-content: center;
+  align-items: center;
+}

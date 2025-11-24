@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="styles.css">
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Client - StorAll</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <img src="../assets/logo.png" alt="Logo" class="logo" onclick="openRoleModal()">
+    <h1>Bienvenue Client</h1>
+  </header>
+  <main>
+    <img src="../assets/Scan_qrcode.png" alt="Scan QR Code" class="scan-img">
+    <p class="instruction">Utilisez la caméra de votre téléphone pour scanner le QR Code du magasin afin de commencer vos achats.</p>
+    <button onclick="showHowItWorks()" class="how-btn">Comment ça marche ?</button>
+    <div id="howModal" class="modal">
+      <div class="modal-content">
+        <h2>Comment ça marche ?</h2>
+        <ol>
+          <li>Scannez le QR Code du magasin avec la caméra de votre téléphone.</li>
+          <li>Consultez le stock et sélectionnez vos produits.</li>
+          <li>Ajustez la quantité et la couleur si disponible.</li>
+          <li>Validez votre panier et envoyez la commande.</li>
+        </ol>
+        <button onclick="closeHowItWorks()">Fermer</button>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <p>© 2025 Jeremy Topaka. Tous droits réservés.</p>
+  </footer>
+  <script>
+    function showHowItWorks() {
+      document.getElementById('howModal').style.display = 'block';
+    }
+    function closeHowItWorks() {
+      document.getElementById('howModal').style.display = 'none';
+    }
+    function openRoleModal() {
+      window.location.href = 'roles.html';
+    }
+  </script>
+</body>
+</html>

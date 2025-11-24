@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Scanner QR Code</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #fff; margin: 0; }
+    h2 { color: #00CFFF; margin-top: 24px; }
+    #video { width: 320px; height: 240px; background: #eee; margin: 24px auto; border-radius: 8px; }
+    #result { font-size: 18px; color: #232B36; margin-top: 16px; }
+    button { background: #FFB347; color: #232B36; border: none; padding: 10px 24px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 24px; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+</head>
+<body>
+  <h2>Scannez le QR Code du magasin</h2>
+  <video id="video" autoplay></video>
+  <canvas id="canvas" style="display:none;"></canvas>
+  <div id="result"></div>
+  <button onclick="window.location.reload()">Réessayer</button>
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const resultDiv = document.getElementById('result');
+    let scanning = false;
+
+    function startCamera() {
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        .then(function(stream) {
+          video.srcObject = stream;
+          video.setAttribute('playsinline', true);
+          scanning = true;
+          requestAnimationFrame(scanFrame);
+        })
+        .catch(function(err) {
+          resultDiv.innerText = 'Erreur d\'accès à la caméra';
+        });
+    }
+
+    function scanFrame() {
+      if (!scanning) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height);
+      if (code) {
+        scanning = false;
+        resultDiv.innerText = 'QR Code: ' + code.data;
+        if (window.ReactNativeWebView) {
+          window.ReactNativeWebView.postMessage(code.data);
+        }
+      } else {
+        requestAnimationFrame(scanFrame);
+      }
+    }
+
+    startCamera();
+  </script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Détail du Magasin - StorAll</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <img src="../assets/logo.png" alt="Logo" class="logo" onclick="openRoleModal()">
+    <button onclick="window.history.back()" class="back-btn">← Retour</button>
+    <h1 id="storeTitle">Détail du Magasin</h1>
+  </header>
+  <main>
+    <input type="text" id="storeName" placeholder="Nom du magasin">
+    <button onclick="editStoreName()">Modifier le nom</button>
+    <div>
+      <span id="storeStatus" style="font-weight:bold;color:#00CFFF">Actif</span>
+      <button onclick="toggleStoreStatus()" id="toggleStatusBtn">Désactiver</button>
+    </div>
+    <button onclick="deleteStore()" style="background:#FF4F4F;color:#fff;margin-top:8px;">Supprimer le magasin</button>
+    <section>
+      <h2>Managers</h2>
+      <input type="text" id="newManager" placeholder="Ajouter un manager">
+      <button onclick="addManager()">Ajouter</button>
+      <ul id="managerList"></ul>
+    </section>
+    <section>
+      <h2>Préparateurs</h2>
+      <input type="text" id="newPicker" placeholder="Ajouter un préparateur">
+      <button onclick="addPicker()">Ajouter</button>
+      <ul id="pickerList"></ul>
+    </section>
+  </main>
+  <footer>
+    <p>© 2025 Jeremy Topaka. Tous droits réservés.</p>
+  </footer>
+  <script>
+    // Dummy data for demo
+    let store = { id: '1', name: 'Magasin Central', status: true };
+    let managers = [ { id: '1', name: 'Jean Dupont' }, { id: '2', name: 'Marie Curie' } ];
+    let pickers = [ { id: '1', name: 'Paul Martin' } ];
+    document.getElementById('storeTitle').textContent = store.name;
+    document.getElementById('storeName').value = store.name;
+    document.getElementById('storeStatus').textContent = store.status ? 'Actif' : 'Désactivé';
+    document.getElementById('storeStatus').style.color = store.status ? '#00CFFF' : '#FF4F4F';
+    document.getElementById('toggleStatusBtn').textContent = store.status ? 'Désactiver' : 'Activer';
+    function editStoreName() {
+      store.name = document.getElementById('storeName').value;
+      document.getElementById('storeTitle').textContent = store.name;
+    }
+    function toggleStoreStatus() {
+      store.status = !store.status;
+      document.getElementById('storeStatus').textContent = store.status ? 'Actif' : 'Désactivé';
+      document.getElementById('storeStatus').style.color = store.status ? '#00CFFF' : '#FF4F4F';
+      document.getElementById('toggleStatusBtn').textContent = store.status ? 'Désactiver' : 'Activer';
+    }
+    function deleteStore() {
+      if (confirm('Êtes-vous sûr de vouloir supprimer ce magasin ?')) {
+        window.history.back();
+      }
+    }
+    function renderManagers() {
+      const ul = document.getElementById('managerList');
+      ul.innerHTML = '';
+      managers.forEach(m => {
+        const li = document.createElement('li');
+        li.textContent = m.name;
+        const btn = document.createElement('button');
+        btn.textContent = 'Retirer';
+        btn.onclick = () => { managers = managers.filter(x => x.id !== m.id); renderManagers(); };
+        li.appendChild(btn);
+        ul.appendChild(li);
+      });
+    }
+    function addManager() {
+      const name = document.getElementById('newManager').value.trim();
+      if (name) {
+        managers.push({ id: Date.now().toString(), name });
+        document.getElementById('newManager').value = '';
+        renderManagers();
+      }
+    }
+    function renderPickers() {
+      const ul = document.getElementById('pickerList');
+      ul.innerHTML = '';
+      pickers.forEach(p => {
+        const li = document.createElement('li');
+        li.textContent = p.name;
+        const btn = document.createElement('button');
+        btn.textContent = 'Retirer';
+        btn.onclick = () => { pickers = pickers.filter(x => x.id !== p.id); renderPickers(); };
+        li.appendChild(btn);
+        ul.appendChild(li);
+      });
+    }
+    function addPicker() {
+      const name = document.getElementById('newPicker').value.trim();
+      if (name) {
+        pickers.push({ id: Date.now().toString(), name });
+        document.getElementById('newPicker').value = '';
+        renderPickers();
+      }
+    }
+    renderManagers();
+    renderPickers();
+    function openRoleModal() {
+      window.location.href = 'roles.html';
+    }
+  </script>
+</body>
+</html>

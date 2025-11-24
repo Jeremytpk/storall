@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - StorAll</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <img src="../assets/logo.png" alt="Logo" class="logo" onclick="openRoleModal()">
+    <h1>Panneau d'Administration</h1>
+  </header>
+  <main>
+    <div class="admin-cards">
+      <div class="admin-card" style="background:#FFB347">
+        <h2>Magasins</h2>
+        <p>Créer, modifier et supprimer des magasins.</p>
+        <button onclick="window.location.href='stores.html'">Gérer les magasins</button>
+      </div>
+      <div class="admin-card" style="background:#00CFFF">
+        <h2>Managers</h2>
+        <p>Ajouter ou retirer des managers.</p>
+        <button>Gérer les managers</button>
+      </div>
+      <div class="admin-card" style="background:#2ED8C3">
+        <h2>Préparateurs</h2>
+        <p>Gérer les préparateurs de commandes.</p>
+        <button>Gérer les préparateurs</button>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <p>© 2025 Jeremy Topaka. Tous droits réservés.</p>
+  </footer>
+  <script>
+    function openRoleModal() {
+      window.location.href = 'roles.html';
+    }
+  </script>
+</body>
+</html>

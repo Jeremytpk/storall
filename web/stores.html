@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <link rel="stylesheet" href="styles.css">
+<head>
+  <meta charset="UTF-8">
+  <title>Liste des Magasins - StorAll</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <img src="../assets/logo.png" alt="Logo" class="logo" onclick="openRoleModal()">
+    <button onclick="window.history.back()" class="back-btn">← Retour</button>
+    <h1>Liste des Magasins</h1>
+  </header>
+  <main>
+    <input type="text" id="search" placeholder="Rechercher un magasin..." oninput="filterStores()">
+    <input type="text" id="newStore" placeholder="Nom du nouveau magasin">
+    <button onclick="addStore()">Créer</button>
+    <ul id="storeList"></ul>
+  </main>
+  <footer>
+    <p>© 2025 Jeremy Topaka. Tous droits réservés.</p>
+  </footer>
+  <script>
+    let stores = [
+      { id: '1', name: 'Magasin Central', totalPaid: 1200 },
+      { id: '2', name: 'Magasin Sud', totalPaid: 800 },
+      { id: '3', name: 'Magasin Nord', totalPaid: 950 },
+    ];
+    function renderStores(list) {
+      const ul = document.getElementById('storeList');
+      ul.innerHTML = '';
+      list.forEach(store => {
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${store.name}</strong> <span style='color:#00CFFF'>Total payé: ${store.totalPaid} €</span> <button onclick=\"viewStore('${store.id}')\">Voir</button>`;
+        ul.appendChild(li);
+      });
+    }
+    function filterStores() {
+      const val = document.getElementById('search').value.toLowerCase();
+      renderStores(stores.filter(s => s.name.toLowerCase().includes(val)));
+    }
+    function addStore() {
+      const name = document.getElementById('newStore').value.trim();
+      if (name) {
+        stores.push({ id: Date.now().toString(), name, totalPaid: 0 });
+        document.getElementById('newStore').value = '';
+        renderStores(stores);
+      }
+    }
+    function viewStore(id) {
+      window.location.href = `store_detail.html?storeId=${id}`;
+    }
+    function openRoleModal() {
+      window.location.href = 'roles.html';
+    }
+    renderStores(stores);
+  </script>
+</body>
+</html>
