@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, TextInput, 
+  TouchableOpacity, StyleSheet, 
+  Modal, KeyboardAvoidingView, 
+  Platform, ScrollView } from 'react-native';
 import { Image } from 'react-native';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 import { app } from '../firebase';
 import Header from '../components/Header';
 
@@ -22,6 +25,18 @@ export default function AuthScreen({ navigation, onLogoPress }) {
     setLoading(true);
     try {
       if (isLogin) {
+        // Check existence in stores collection
+        const storeSnap = await getDoc(doc(db, 'stores', 'main'));
+        if (storeSnap.exists()) {
+          const data = storeSnap.data();
+          if (data.admins && !data.admins.some(a => a.email === email)) {
+            setModalMessage("Cet email n'existe pas dans le magasin.");
+            setModalSuccess(false);
+            setModalVisible(true);
+            setLoading(false);
+            return;
+          }
+        }
         await signInWithEmailAndPassword(auth, email, password);
         setModalMessage('Connexion réussie.');
         setModalSuccess(true);
@@ -33,6 +48,15 @@ export default function AuthScreen({ navigation, onLogoPress }) {
           role: 'admin',
           createdAt: new Date().toISOString(),
         });
+        // Add to stores collection
+        const storeSnap = await getDoc(doc(db, 'stores', 'main'));
+        let admins = [];
+        if (storeSnap.exists()) {
+          const data = storeSnap.data();
+          admins = data.admins || [];
+        }
+        admins.push({ email });
+        await setDoc(doc(db, 'stores', 'main'), { admins }, { merge: true });
         setModalMessage('Compte créé avec succès.');
         setModalSuccess(true);
         setModalVisible(true);
@@ -46,54 +70,67 @@ export default function AuthScreen({ navigation, onLogoPress }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Header onLogoPress={onLogoPress} />
-      <View style={styles.authBox}>
-        <Text style={styles.title}>{isLogin ? 'Connexion Admin' : 'Créer un compte Admin'}</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Mot de passe"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-        <TouchableOpacity style={styles.authBtn} onPress={handleAuth} disabled={loading}>
-          <Text style={styles.authBtnText}>{isLogin ? 'Se connecter' : 'Créer le compte'}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
-          <Text style={styles.switchText}>
-            {isLogin ? "Pas de compte ? Créer un compte" : "Déjà un compte ? Se connecter"}
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <Modal visible={modalVisible} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={[styles.modalTitle, { color: modalSuccess ? '#00CFFF' : '#FF4F4F', textAlign: 'center' }]}> 
-              {modalSuccess ? 'Succès' : 'Erreur'}
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={60}
+    >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Header onLogoPress={onLogoPress} />
+        <View style={styles.authBox}>
+          <Image
+            source={require('../assets/Admin.png')}
+            style={{ width: 180, height: 180, alignSelf: 'center', marginTop: 4, marginBottom: 8, resizeMode: 'contain', borderRadius: 100 }}
+          />
+          <Text style={styles.title}>{isLogin ? 'Connexion Admin' : 'Créer un compte Admin'}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Mot de passe"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+          <TouchableOpacity style={styles.authBtn} onPress={handleAuth} disabled={loading}>
+            <Text style={styles.authBtnText}>{isLogin ? 'Se connecter' : 'Créer le compte'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
+            <Text style={styles.switchText}>
+              {isLogin ? "Pas de compte ? Créer un compte" : "Déjà un compte ? Se connecter"}
             </Text>
-            <Text style={styles.modalMessage}>{modalMessage}</Text>
-            <TouchableOpacity
-              style={[styles.closeModalBtn, { backgroundColor: modalSuccess ? '#00CFFF' : '#FF4F4F' }]}
-              onPress={() => {
-                setModalVisible(false);
-                if (modalSuccess) navigation.replace('Admin');
-              }}
-            >
-              <Text style={styles.closeModalText}>Fermer</Text>
-            </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         </View>
-      </Modal>
-    </View>
+        <Modal visible={modalVisible} transparent animationType="fade">
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={[styles.modalTitle, { color: modalSuccess ? '#00CFFF' : '#FF4F4F', textAlign: 'center' }]}> 
+                {modalSuccess ? 'Succès' : 'Erreur'}
+              </Text>
+              <Text style={styles.modalMessage}>{modalMessage}</Text>
+              <TouchableOpacity
+                style={[styles.closeModalBtn, { backgroundColor: modalSuccess ? '#00CFFF' : '#FF4F4F' }]}
+                onPress={() => {
+                  setModalVisible(false);
+                  if (modalSuccess) navigation.replace('Admin');
+                }}
+              >
+                <Text style={styles.closeModalText}>Fermer</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

@@ -16,6 +16,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 import AuthScreen from './screens/AuthScreen';
 import Profil from './screens/Profil';
 import { createRef } from 'react';
+import ClientCart from './screens/ClientCart';
+import MyStore from './screens/MyStore';
+import ClientStore from './screens/ClientStore';
+import AddProduct from './screens/AddProduct';
+import MyCart from './screens/MyCart';
 
 const navigationRef = createRef();
 
@@ -63,6 +68,10 @@ export default function App() {
       } else {
         navigationRef.current?.navigate('ManagerPickerLogin', { role: selectedRole });
       }
+    } else if (selectedRole === 'client') {
+      setRole('client');
+      setModalVisible(false);
+      navigationRef.current?.navigate('Client');
     } else {
       setRole(selectedRole);
       setModalVisible(false);
@@ -101,6 +110,21 @@ export default function App() {
           </Stack.Screen>
           <Stack.Screen name="Profil">
             {props => <Profil {...props} onLogoPress={handleLogoPress} />}
+          </Stack.Screen>
+          <Stack.Screen name="ClientCart">
+            {props => <ClientCart {...props} onLogoPress={handleLogoPress} />}
+          </Stack.Screen>
+          <Stack.Screen name="MyStore">
+            {props => <MyStore {...props} onLogoPress={handleLogoPress} />}
+          </Stack.Screen>
+          <Stack.Screen name="ClientStore">
+            {props => <ClientStore {...props} onLogoPress={handleLogoPress} />}
+          </Stack.Screen>
+          <Stack.Screen name="AddProduct">
+            {props => <AddProduct {...props} onLogoPress={handleLogoPress} />}
+          </Stack.Screen>
+          <Stack.Screen name="MyCart">
+            {props => <MyCart {...props} onLogoPress={handleLogoPress} />}
           </Stack.Screen>
         </Stack.Navigator>
         <RoleSelectionModal

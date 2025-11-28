@@ -311,7 +311,7 @@ export default function StoreDetail({ route, navigation, onLogoPress }) {
         )}
       </View>
       <View style={styles.section}>
-        <Text style={styles.subtitle}>Pickers</Text>
+        <Text style={styles.subtitle}>Préparateurs</Text>
         {pickers.length === 0 ? (
           <>
             <Text style={styles.noData}>AUCUNE DONNÉE</Text>

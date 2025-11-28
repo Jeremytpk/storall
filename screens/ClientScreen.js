@@ -1,19 +1,81 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, FlatList } from 'react-native';
 import Header from '../components/Header';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { app } from '../firebase';
 
-export default function ClientScreen({ onLogoPress }) {
+export default function ClientScreen({ onLogoPress, navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
+  const [search, setSearch] = useState('');
+  const [stores, setStores] = useState([]);
+  const [filteredStores, setFilteredStores] = useState([]);
+
+  useEffect(() => {
+    const fetchStores = async () => {
+      const db = getFirestore(app);
+      const snap = await getDocs(collection(db, 'products'));
+      // Get unique store names from products collection
+      const storeNames = Array.from(new Set(snap.docs.map(doc => doc.data().storeName).filter(Boolean)));
+      // Map to objects for FlatList compatibility
+      const storeList = storeNames.map((name, idx) => ({ id: String(idx), name }));
+      setStores(storeList);
+      setFilteredStores(storeList);
+    };
+    fetchStores();
+  }, []);
+
+  useEffect(() => {
+    if (search.trim() === '') {
+      setFilteredStores([]);
+    } else {
+      setFilteredStores(
+        stores.filter(s =>
+          s.name?.toLowerCase().includes(search.toLowerCase())
+        )
+      );
+    }
+  }, [search, stores]);
+
   const handleHowItWorks = () => setModalVisible(true);
   const handleCloseModal = () => setModalVisible(false);
+
   return (
     <View style={styles.container}>
       <Header onLogoPress={onLogoPress} />
+      <View style={styles.searchBox}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Rechercher un magasin..."
+          value={search}
+          onChangeText={setSearch}
+        />
+      </View>
+      <FlatList
+        data={filteredStores}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.storeRow}
+            onPress={async () => {
+              // Fetch all products for this store name
+              const db = getFirestore(app);
+              const snap = await getDocs(collection(db, 'products'));
+              const productsList = snap.docs
+                .map(doc => ({ id: doc.id, ...doc.data() }))
+                .filter(product => product.storeName && product.storeName === item.name);
+              navigation.navigate('ClientStore', { store: item, products: productsList });
+            }}
+          >
+            <Text style={styles.storeName}>{item.name}</Text>
+          </TouchableOpacity>
+        )}
+        style={styles.storeList}
+      />
       <View style={styles.content}>
         <Image source={require('../assets/person_cart.png')} style={styles.person_cart} />
         <Text style={styles.title}>Bienvenue Client</Text>
         <Text style={styles.instruction}>
-          Utilisez la caméra de votre téléphone pour scanner le QR Code du magasin afin de commencer vos achats.
+          Utilisez la caméra de votre téléphone pour scanner le QR Code du magasin ou recherchez le magasin dans la barre de recherche afin de commencer vos achats.
         </Text>
         <TouchableOpacity style={styles.howItWorksBtn} onPress={handleHowItWorks}>
           <Text style={styles.howItWorksText}>Comment ça marche ?</Text>
@@ -95,7 +157,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    bottom: 50,
+    bottom: 60,
   },
   title: {
     fontSize: 24,
@@ -154,5 +216,35 @@ const styles = StyleSheet.create({
     color: '#888',
     fontSize: 14,
     fontWeight: '500',
+  },
+  searchBox: {
+    width: '100%',
+    paddingHorizontal: 16,
+    marginTop: 18,
+    marginBottom: 2,
+  },
+  searchInput: {
+    backgroundColor: '#F9F9F9',
+    borderRadius: 15,
+    padding: 10,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  storeList: {
+    width: '100%',
+    maxHeight: 120,
+    marginBottom: 8,
+  },
+  storeRow: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    backgroundColor: '#fff',
+  },
+  storeName: {
+    fontSize: 16,
+    color: '#00CFFF',
+    fontWeight: 'bold',
   },
 });
